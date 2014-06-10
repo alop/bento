@@ -65,7 +65,6 @@
         "scripts/common/sshd.sh",
         "scripts/common/vmtools.sh",
         "scripts/common/chef.sh",
-        "scripts/common/vagrant.sh",
         "scripts/fedora/cleanup.sh",
         "scripts/common/minimize.sh"
       ],
