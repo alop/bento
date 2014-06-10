@@ -34,10 +34,10 @@
       "iso_checksum_type": "sha1",
       "iso_url": "{{user `mirror`}}/12.04/ubuntu-12.04.4-server-amd64.iso",
       "output_directory": "packer-ubuntu-12.04-amd64-virtualbox",
-      "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
-      "ssh_password": "vagrant",
+      "shutdown_command": "shutdown -P now",
+      "ssh_password": "root",
       "ssh_port": 22,
-      "ssh_username": "vagrant",
+      "ssh_username": "root",
       "ssh_wait_timeout": "10000s",
       "type": "virtualbox-iso",
       "vboxmanage": [
@@ -58,6 +58,7 @@
       "vm_name": "packer-ubuntu-12.04-amd64"
     },
     {
+      "accelerator": "kvm",
       "boot_command": [
         "<esc><wait>",
         "<esc><wait>",
@@ -84,47 +85,28 @@
       ],
       "boot_wait": "10s",
       "disk_size": 40960,
-      "guest_os_type": "ubuntu-64",
       "http_directory": "http",
       "iso_checksum": "b802bb065df98c0530d782eb94778c2da19e10d6",
       "iso_checksum_type": "sha1",
       "iso_url": "{{user `mirror`}}/12.04/ubuntu-12.04.4-server-amd64.iso",
       "output_directory": "packer-ubuntu-12.04-amd64-vmware",
-      "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
-      "ssh_password": "vagrant",
+      "shutdown_command": "shutdown -P now",
+      "ssh_password": "root",
       "ssh_port": 22,
-      "ssh_username": "vagrant",
+      "ssh_username": "root",
       "ssh_wait_timeout": "10000s",
-      "tools_upload_flavor": "linux",
-      "type": "vmware-iso",
-      "vm_name": "packer-ubuntu-12.04-amd64",
-      "vmx_data": {
-        "cpuid.coresPerSocket": "1",
-        "memsize": "384",
-        "numvcpus": "1"
-      }
-    }
-  ],
-  "post-processors": [
-    {
-      "output": "../builds/{{.Provider}}/opscode_ubuntu-12.04_chef-{{user `chef_version`}}.box",
-      "type": "vagrant"
+      "type": "qemu",
+      "vm_name": "packer-ubuntu-12.04-amd64"
     }
   ],
   "provisioners": [
     {
-      "environment_vars": [
-        "CHEF_VERSION={{user `chef_version`}}"
-      ],
-      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
       "scripts": [
         "scripts/ubuntu/update.sh",
         "scripts/common/sshd.sh",
         "scripts/ubuntu/networking.sh",
         "scripts/ubuntu/sudoers.sh",
         "scripts/common/vagrant.sh",
-        "scripts/common/vmtools.sh",
-        "scripts/common/chef.sh",
         "scripts/ubuntu/cleanup.sh",
         "scripts/common/minimize.sh"
       ],
@@ -132,7 +114,6 @@
     }
   ],
   "variables": {
-    "chef_version": "provisionerless",
     "mirror": "http://releases.ubuntu.com"
   }
 }

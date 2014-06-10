@@ -1,6 +1,5 @@
 {
   "variables": {
-    "chef_version": "provisionerless",
     "mirror": "http://cdimage.debian.org/cdimage/archive"
   },
   "builders": [
@@ -32,10 +31,10 @@
       "iso_checksum_type": "sha1",
       "iso_url": "{{user `mirror`}}/6.0.9/amd64/iso-cd/debian-6.0.9-amd64-CD-1.iso",
       "output_directory": "packer-debian-6.0.9-amd64-virtualbox",
-      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/shutdown -hP now",
-      "ssh_password": "vagrant",
+      "shutdown_command": "/sbin/shutdown -hP now",
+      "ssh_password": "root",
       "ssh_port": 22,
-      "ssh_username": "vagrant",
+      "ssh_username": "root",
       "ssh_wait_timeout": "10000s",
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--memory", "384" ],
@@ -45,7 +44,8 @@
       "vm_name": "packer-debian-6.0.9-amd64"
     },
     {
-      "type": "vmware-iso",
+      "type": "qemu",
+      "accelerator": "kvm",
       "boot_command": [
         "<esc><wait>",
         "install <wait>",
@@ -65,45 +65,28 @@
       ],
       "boot_wait": "10s",
       "disk_size": 40960,
-      "guest_os_type": "debian5-64",
       "http_directory": "http",
       "iso_checksum": "3f3ec3e1adb4c2904a1234799f4775c10cf47cce",
       "iso_checksum_type": "sha1",
       "iso_url": "{{user `mirror`}}/6.0.9/amd64/iso-cd/debian-6.0.9-amd64-CD-1.iso",
-      "output_directory": "packer-debian-6.0.9-amd64-vmware",
-      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/shutdown -hP now",
-      "ssh_password": "vagrant",
+      "output_directory": "packer-debian-6.0.9-amd64",
+      "shutdown_command": "/sbin/shutdown -hP now",
+      "ssh_password": "root",
       "ssh_port": 22,
-      "ssh_username": "vagrant",
+      "ssh_username": "root",
       "ssh_wait_timeout": "10000s",
-      "tools_upload_flavor": "linux",
-      "vm_name": "packer-debian-6.0.9-amd64",
-      "vmx_data": {
-        "cpuid.coresPerSocket": "1",
-        "memsize": "384",
-        "numvcpus": "1"
-      }
-    }
-  ],
-  "post-processors": [
-    {
-      "type": "vagrant",
-      "output": "../builds/{{.Provider}}/opscode_debian-6.0.9_chef-{{user `chef_version`}}.box"
+      "vm_name": "packer-debian-6.0.9-amd64"
     }
   ],
   "provisioners": [
     {
       "type": "shell",
-      "environment_vars": [ "CHEF_VERSION={{user `chef_version`}}" ],
-      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
         "scripts/debian/update.sh",
         "scripts/common/sshd.sh",
         "scripts/debian/networking.sh",
         "scripts/debian/sudoers.sh",
         "scripts/common/vagrant.sh",
-        "scripts/common/vmtools.sh",
-        "scripts/common/chef.sh",
         "scripts/debian/cleanup.sh",
         "scripts/common/minimize.sh"
       ]
